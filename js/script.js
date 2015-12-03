@@ -2,6 +2,8 @@
 var map = null;    
 var trafficLayer=new google.maps.TrafficLayer();
 //----------------------------------------------------------------------------//
+var markers = []; //markers <-- (plural) is a google earth remove marker sample. 
+//Todo: refactor after desired behavior achieved.
 
 function trimet(passRouteInput) {
   //Accesses the TriMet API for live vehicle location info.
@@ -50,6 +52,7 @@ function displayMarkers(dataIn) {
         map: map,
         animation: google.maps.Animation.DROP
     });
+    markers.push(marker);
   //Zooms in on marker upon click.
   google.maps.event.addListener(marker, 'click', function() {
   map.panTo(this.getPosition());
@@ -58,12 +61,31 @@ function displayMarkers(dataIn) {
   }
 }
 
+// Sets the map on all markers in the array.
+function setMapOnAll(map) {
+  for (var i = 0; i < markers.length; i++) {
+    markers[i].setMap(map);
+  }
+}
+
+// Removes the markers from the map, but keeps them in the array.
+function clearMarkers() {
+  setMapOnAll(null);
+}
+
+// Deletes all markers in the array by removing references to them.
+function deleteMarkers() {
+  clearMarkers();
+  markers = [];
+}
+
+
 function displayGeojson(dataIn) {
   var geojsonURL1 = 'http://localhost:9000/routeserver/';
   var geojsonURL2 = 'TMRoutes?=format=json&rte=';
   var geojsonRteURL = dataIn;
   map.data.setStyle({
-    strokeColor: 'orange',
+    strokeColor: 'blue',
     strokeOpacity: 0.5,
   })
 
@@ -108,6 +130,7 @@ function initialize(dataIn) {
   
 //----Event Listener----------------------------------------------------------//  
   $("#routes").change(function() {
+    deleteMarkers();
     var passRouteInput = $(this).val();
     console.log(passRouteInput);
     trimet(passRouteInput);
