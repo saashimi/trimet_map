@@ -11,7 +11,7 @@ function trimet(passRouteInput) {
   //Output: A coordinate pair in an array. E.g. [45.5200, -122.6819]
  
   var url = "https://developer.trimet.org/ws/v2/vehicles/appID=" 
-  var dataOut = []; // This is a list of coordinates.
+  var dataOut = []; // This is a list
   var innerData;
   $.post(url + APPID, function(data) {
   data = data.resultSet.vehicle;
@@ -19,8 +19,14 @@ function trimet(passRouteInput) {
       innerData = data[index];
       $.each(innerData, function(index1, value1) {
         if (index1 === "routeNumber" && value1 === Number(passRouteInput)) { 
-          var coord = [innerData.latitude, innerData.longitude];
-          dataOut.push(coord);
+          var dataPacket = [
+            innerData.latitude,  //index = 0
+            innerData.longitude, //index = 1
+            innerData.vehicleID, //index = 2
+            innerData.delay,     //index = 3
+            innerData.direction, //index = 4
+          ];
+          dataOut.push(dataPacket);
           displayMarkers(dataOut);
         } 
       });
@@ -47,17 +53,26 @@ function displayMarkers(dataIn) {
   for( i = 0; i < markerData.length; i++ ) {
     var position = new google.maps.LatLng(markerData[i][0], markerData[i][1]);
     //bounds.extend(position);
-    marker = new google.maps.Marker({
+    var marker = new google.maps.Marker({
         position: position,
         map: map,
-        animation: google.maps.Animation.DROP
+        animation: google.maps.Animation.DROP,
+        clickable: true
     });
+    marker.info = new google.maps.InfoWindow({
+      content: 
+        String(markerData[i][2]) + " " +
+        String(markerData[i][3]) + " " + 
+        String(markerData[i][4]) 
+    })
+
     markers.push(marker);
-  //Zooms in on marker upon click.
-  google.maps.event.addListener(marker, 'click', function() {
-  map.panTo(this.getPosition());
-  map.setZoom(15);
-  });  
+    //Zooms in on marker upon click.
+    google.maps.event.addListener(marker, 'click', function() {
+      map.panTo(this.getPosition());
+      map.setZoom(15);
+      this.info.open(map, this);
+    });  
   }
 }
 
@@ -129,8 +144,13 @@ function initialize(dataIn) {
   check();
   
 //----Event Listener----------------------------------------------------------//  
-  $("#routes").change(function() {
+  $("#routes").change(function(feature) {
     deleteMarkers();
+    //investigate this: uses callback functions
+    map.data.forEach(function(feature) {
+        map.data.remove(feature);
+    });
+
     var passRouteInput = $(this).val();
     console.log(passRouteInput);
     trimet(passRouteInput);
