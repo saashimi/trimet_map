@@ -25,6 +25,7 @@ function trimet(passRouteInput) {
             innerData.vehicleID, //index = 2
             innerData.delay,     //index = 3
             innerData.direction, //index = 4
+            innerData.signMessageLong //index = 5
           ];
           dataOut.push(dataPacket);
           displayMarkers(dataOut);
@@ -53,17 +54,31 @@ function displayMarkers(dataIn) {
   for( i = 0; i < markerData.length; i++ ) {
     var position = new google.maps.LatLng(markerData[i][0], markerData[i][1]);
     //bounds.extend(position);
-    var marker = new google.maps.Marker({
-        position: position,
-        map: map,
-        animation: google.maps.Animation.DROP,
-        clickable: true
-    });
+    if (markerData[i][4] === 0) { 
+      var marker = new google.maps.Marker({
+          icon: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
+          position: position,
+          map: map,
+          animation: google.maps.Animation.DROP,
+          clickable: true
+      })
+    } else {
+      var marker = new google.maps.Marker({
+          icon: "http://maps.google.com/mapfiles/ms/icons/green-dot.png",
+          position: position,
+          map: map,
+          animation: google.maps.Animation.DROP,
+          clickable: true
+      });
+      }
+    
+    var infoContent = ("<p> Vehicle Number: " + String(markerData[i][2]) + '</br>'
+        +"<p>" + String(markerData[i][5]) + '</br>'
+        +"<p> Delay is: " + ((markerData[i][3])/60).toFixed(2) + " minutes." + '</br>'
+        //String(markerData[i][4]) 
+        );
     marker.info = new google.maps.InfoWindow({
-      content: 
-        String(markerData[i][2]) + " " +
-        String(markerData[i][3]) + " " + 
-        String(markerData[i][4]) 
+      content: infoContent
     })
 
     markers.push(marker);
@@ -97,7 +112,7 @@ function deleteMarkers() {
 
 function displayGeojson(dataIn) {
   var geojsonURL1 = 'http://localhost:9000/routeserver/';
-  var geojsonURL2 = 'TMRoutes?=format=json&rte=';
+  var geojsonURL2 = 'TMRoutes?=format%3Djson&format=json&rte=';
   var geojsonRteURL = dataIn;
   map.data.setStyle({
     strokeColor: 'blue',
