@@ -1,17 +1,18 @@
-//----Global vars for google maps traffic layers to work----------------------//
+//----Global vars for google maps traffic layers------------------------------//
 var map = null;    
 var trafficLayer=new google.maps.TrafficLayer();
-//----------------------------------------------------------------------------//
-var markers = []; //markers <-- (plural) is a google earth remove marker sample. 
-//Todo: refactor after desired behavior achieved.
 
+//----Other global vars-------------------------------------------------------//
+var markers = [];  
+
+//----Functions---------------------------------------------------------------//
 function trimet(passRouteInput) {
   //Accesses the TriMet API for live vehicle location info.
-  //Input:APPID from hidden file.
-  //Output: A coordinate pair in an array. E.g. [45.5200, -122.6819]
+  //Input: Route number from user selection box.
+  //Output: A data packet of relevant TriMet Vehicle info.
  
   var url = "https://developer.trimet.org/ws/v2/vehicles/appID=" 
-  var dataOut = []; // This is a list
+  var dataOut = [];
   var innerData;
   $.post(url + APPID, function(data) {
   data = data.resultSet.vehicle;
@@ -20,11 +21,11 @@ function trimet(passRouteInput) {
       $.each(innerData, function(index1, value1) {
         if (index1 === "routeNumber" && value1 === Number(passRouteInput)) { 
           var dataPacket = [
-            innerData.latitude,  //index = 0
-            innerData.longitude, //index = 1
-            innerData.vehicleID, //index = 2
-            innerData.delay,     //index = 3
-            innerData.direction, //index = 4
+            innerData.latitude,       //index = 0
+            innerData.longitude,      //index = 1
+            innerData.vehicleID,      //index = 2
+            innerData.delay,          //index = 3
+            innerData.direction,      //index = 4
             innerData.signMessageLong //index = 5
           ];
           dataOut.push(dataPacket);
@@ -48,12 +49,11 @@ function check() {
 function displayMarkers(dataIn) {
   //Displays marker data from TriMet API data coordinates.
   //Input: output from triMet() function; an array of lat/long coordinates.
-
+  //Output: A blue marker on the google map canvas if direction === 0; 
+  //        A green marker on the google map canvas if direction === 1. 
   var markerData = dataIn;
-  // refactor for JQuery later
   for( i = 0; i < markerData.length; i++ ) {
     var position = new google.maps.LatLng(markerData[i][0], markerData[i][1]);
-    //bounds.extend(position);
     if (markerData[i][4] === 0) { 
       var marker = new google.maps.Marker({
           icon: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
@@ -72,9 +72,9 @@ function displayMarkers(dataIn) {
       });
       }
     
-    var infoContent = ("<p> Vehicle Number: " + String(markerData[i][2]) + '</br>'
+    var infoContent = ("<h5><p> Vehicle Number: " + String(markerData[i][2]) + '</br>'
         +"<p>" + String(markerData[i][5]) + '</br>'
-        +"<p> Delay is: " + ((markerData[i][3])/60).toFixed(2) + " minutes." + '</br>'
+        +"<h6><p> Delay is: " + ((markerData[i][3])/60).toFixed(2) + " minutes." + '</br></h6>'
         //String(markerData[i][4]) 
         );
     marker.info = new google.maps.InfoWindow({
@@ -91,6 +91,7 @@ function displayMarkers(dataIn) {
   }
 }
 
+//----Clear map marker functions---------------------------------------------//
 // Sets the map on all markers in the array.
 function setMapOnAll(map) {
   for (var i = 0; i < markers.length; i++) {
@@ -108,7 +109,7 @@ function deleteMarkers() {
   clearMarkers();
   markers = [];
 }
-
+//----End clear map marker functions------------------------------------------//
 
 function displayGeojson(dataIn) {
   var geojsonURL1 = 'http://localhost:9000/routeserver/';
@@ -122,8 +123,8 @@ function displayGeojson(dataIn) {
   map.data.loadGeoJson(geojsonURL1 + geojsonURL2 + geojsonRteURL);
 }//end displayGeojson
 
+//----The main google maps initialization function----------------------------//
 function initialize(dataIn) {
-  // The main google maps initialization function.
   // First defines styles.
   var styles = [
     {
@@ -137,7 +138,6 @@ function initialize(dataIn) {
         elementType: "geometry",
         stylers: [
           {lightness : 100}
-          //{visibility : "on"}
       ]
     }
   ];
@@ -147,7 +147,7 @@ function initialize(dataIn) {
     zoom:12,
     mapTypeControlOptions: {  
       mapTypeIds: [] // kept as an empty list because we want to disallow users
-                     // to select other options. Maintains site "branding."
+                     // to select other styling options. Maintains site "branding."
     }
   };
   
@@ -156,9 +156,30 @@ function initialize(dataIn) {
   map.mapTypes.set('desaturated', mapType);
   map.setMapTypeId('desaturated');
 
+  //----Zooms to route extents------------------------------------------------//
+  var bounds = new google.maps.LatLngBounds();
+    map.data.addListener('addfeature', function (e) {
+        processPoints(e.feature.getGeometry(), bounds.extend, bounds);
+        map.fitBounds(bounds);
+    });
+
+  function processPoints(geometry, callback, thisArg) {
+      if (geometry instanceof google.maps.LatLng) {
+          callback.call(thisArg, geometry);
+      } else if (geometry instanceof google.maps.Data.Point) {
+          callback.call(thisArg, geometry.get());
+      } else {
+          geometry.getArray().forEach(function (g) {
+              processPoints(g, callback, thisArg);
+          });
+      }
+  }
+  //----End zoom to route extents---------------------------------------------//
+
+  //----Initialize traffic checkbox-------------------------------------------//
   check();
   
-//----Event Listener----------------------------------------------------------//  
+  //----Event Listener--------------------------------------------------------//  
   $("#routes").change(function(feature) {
     deleteMarkers();
     //investigate this: uses callback functions
@@ -178,7 +199,8 @@ function initialize(dataIn) {
     e.preventDefault();
     trimet(passRouteInput);
   })*/
-}; // End initialize()
+}; 
+//----End initialize()--------------------------------------------------------//
 
 google.maps.event.addDomListener(window, 'load', initialize);   
 
