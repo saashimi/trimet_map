@@ -6,5 +6,5 @@ from .serializers import SpatialDataSerializer
 class SpatialDataViewSet(viewsets.ModelViewSet):
     queryset = TMRoutes.objects.all()
     serializer_class = SpatialDataSerializer
-    filter_backends = (filters.DjangoFilterBackend,) #KS: new
-    filter_fields = ('rte',) #KS: new
+    filter_backends = (filters.DjangoFilterBackend,) 
+    filter_fields = ('rte',) 

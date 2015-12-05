@@ -8,7 +8,7 @@ class TMRoutes(models.Model):
     dir_desc = models.CharField(max_length=50)
     frequent = models.CharField(max_length=5)
     type = models.CharField(max_length=20)
-    geom = models.MultiLineStringField(srid=4326) # Originally 2913 as determined by
+    geom = models.MultiLineStringField(srid=4326) # Originally SRID=2913 as determined by
                                                   # from prj2epsg.org
                                                   # We've converted to Google Maps
                                                   # web mercator (EPSG:4326)

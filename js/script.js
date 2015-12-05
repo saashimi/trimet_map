@@ -139,6 +139,13 @@ function initialize(dataIn) {
         stylers: [
           {lightness : 100}
       ]
+    },
+    {
+        featureType: 'transit.station',
+        elementType: 'all',
+        stylers: [
+          {visibility: 'off'}
+        ]
     }
   ];
   // Sets the desaturated style (defined above) to desaturated.

@@ -1,5 +1,7 @@
 from selenium import webdriver
 import unittest
+#from selenium.webdriver.common.keys import Keys
+#from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 
 class NewVisitorTest(unittest.TestCase):
 
@@ -14,7 +16,7 @@ class NewVisitorTest(unittest.TestCase):
     # Thunder is a TriMet rider who wants to know the actual location of his bus. 
 
     # He logs on to the homepage.
-        self.browser.get('http://localhost:8080')
+        self.browser.get('http://localhost:9000')
 
     # He makes sure that he's on the correct page.
         self.assertIn('TriMet Vehicle Tracker', self.browser.title)
@@ -24,10 +26,10 @@ class NewVisitorTest(unittest.TestCase):
         temp_map = self.browser.find_element_by_id('tempMap')
         self.assertEqual(
             temp_map.get_attribute('src'),
-            'http://localhost:8080/static/map/test.png'
+            'http://localhost:9000/static/map/test.png'
             )    
 
-    # He is greeted with an input field asking about his particular route.
+    # He is greeted with an dropdown box asking him to select a route.
         inputbox = self.browser.find_element_by_id('inputBox')
         self.assertEqual(
             inputbox.get_attribute('placeholder'),

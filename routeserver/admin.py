@@ -3,4 +3,3 @@ from routeserver.models import TMRoutes
 
 admin.site.register(TMRoutes, admin.OSMGeoAdmin)
 
-#test gitignore
