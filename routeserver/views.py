@@ -1,3 +1,4 @@
+from django.shortcuts import render
 from rest_framework import viewsets, filters
 from .models import TMRoutes
 
@@ -8,3 +9,6 @@ class SpatialDataViewSet(viewsets.ModelViewSet):
     serializer_class = SpatialDataSerializer
     filter_backends = (filters.DjangoFilterBackend,) 
     filter_fields = ('rte',) 
+
+def home_page(request):
+    return render(request, 'home.html')

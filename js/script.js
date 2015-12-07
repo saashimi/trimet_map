@@ -60,7 +60,8 @@ function displayMarkers(dataIn) {
           position: position,
           map: map,
           animation: google.maps.Animation.DROP,
-          clickable: true
+          clickable: true,
+          zIndex: 999
       })
     } else {
       var marker = new google.maps.Marker({
@@ -115,13 +116,26 @@ function displayGeojson(dataIn) {
   var geojsonURL1 = 'http://localhost:9000/routeserver/';
   var geojsonURL2 = 'TMRoutes?=format%3Djson&format=json&rte=';
   var geojsonRteURL = dataIn;
-  map.data.setStyle({
+  var routeStyle = map.data.setStyle({
     strokeColor: 'blue',
     strokeOpacity: 0.5,
   })
 
   map.data.loadGeoJson(geojsonURL1 + geojsonURL2 + geojsonRteURL);
 }//end displayGeojson
+
+function displayRouteStops(dataIn) {
+  var geojsonURL1 = 'http://localhost:8000/dbpopulate/';
+  var geojsonURL2 = 'TMRouteStops?=format%3Djson&format=json&rte=';
+  var geojsonStopURL = dataIn;
+  var stopStyle = map.data.setStyle({
+    icon: 'http://maps.google.com/mapfiles/kml/paddle/blu-blank-lv.png',
+    strokeColor: 'blue',
+    strokeOpacity: 0.5,
+  })
+
+  map.data.loadGeoJson(geojsonURL1 + geojsonURL2 + geojsonStopURL);
+}//end displayGeojson 
 
 //----The main google maps initialization function----------------------------//
 function initialize(dataIn) {
@@ -198,7 +212,16 @@ function initialize(dataIn) {
     console.log(passRouteInput);
     trimet(passRouteInput);
     displayGeojson(passRouteInput);
+    displayRouteStops(passRouteInput);
   })
+
+  /*google.maps.event.addListener(map, 'zoom_changed', function() {
+    zoomLevel = map.getZoom();
+    if (zoomLevel <= 12) {
+      map.data.setStyle({visible: true});
+      //(dataIn);
+    }
+  })   */
 
 /*  $("#mapInput").submit(function(e) {
     var passRouteInput = $("input[name=routeInput]").val();
