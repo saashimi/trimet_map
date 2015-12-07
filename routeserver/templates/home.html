@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/bootstrap/css/styles.css" rel="stylesheet" type="text/css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  <script src="/static/bootstrap/js/bootstrap.min.js"></script>
+  <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyB7jUzKHox8gzaNIyb_vhd51yh5M_F-iqw"></script> 
+  <script type="text/javascript" src="/static/bootstrap/js/hidden.js"></script>
+  <script type="text/javascript" src="/static/bootstrap/js/script.js"></script>
+<title>TriMet Vehicle Tracker</title>
+</head>
+<body>
+<!--Begin Template-->
+ <div class="navbar navbar-custom navbar-fixed-top">
+ <div class="navbar-header"><a class="navbar-brand" href="#">TriMet Vehicle Tracker</a>
+      <a class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+    </div>
+    <div class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="http://saashimi.github.io/blog">About</a></li>
+        <li><a href="http://trimet.org/schedules/index.htm">Maps</a></li>
+        <li><a href="http://trimet.org">Trimet Home</a></li>
+        <li class="checkbox">
+            <label><input type="checkbox" id="traffic" onclick="check()">View Traffic
+            </label>
+        </li>
+        <li>&nbsp;</li>
+      </ul>
+      <form class="navbar-form" id="mapInput">
+        <div class="form-group" style="display:inline;">
+          <div class="input-group">
+            <div class="input-group-btn">
+              <select class="form-control" id="routes">
+                <option>Select a Route to Map</option>      
+                <option value="100">MAX Blue Line</option>
+                <option value="200">MAX Green Line</option>
+                <option value="90">MAX Red Line</option>
+                <option value="190">MAX Yellow Line</option>
+                <option value="290">MAX Orange Line</option>
+                <option value="203">WES Commuter Rail</option>
+                <option value="193">Portland Streetcar - NS Line</option>
+                <option value="194">Portland Streetcar - A Loop</option>
+                <option value="195">Portland Streetcar - B Loop</option>
+                <option value="208">Portland Aerial Tram</option>
+                <option value="1">1-Vermont</option>
+                <option value="4">4-Division/Fessenden</option>
+                <option value="6">6-Martin Luther King Jr Blvd</option>
+                <option value="8">8-Jackson Park/NE 15th</option>
+                <option value="9">9-Powell Blvd</option>
+                <option value="10">10-Harold St</option>
+                <option value="11">11-Rivergate/Marine Dr</option>
+                <option value="12">12-Barbur/Sandy Blvd</option>
+                <option value="14">14-Hawthorne</option>
+                <option value="15">15-Belmont/NW 23rd</option>
+                <option value="16">16-Front Ave/St Helens Rd</option>
+                <option value="17">17-Holgate/Broadway</option>
+                <option value="18">18-Hillside</option>
+                <option value="19">19-Woodstock/Glisan</option>
+                <option value="20">20-Burnside/Stark</option>
+                <option value="21">21-Sandy Blvd/223rd</option>
+                <option value="22">22-Parkrose</option>
+                <option value="23">23-San Rafael</option>
+                <option value="24">24-Fremont</option>
+                <option value="25">25-Glisan/Rockwood</option>
+                <option value="29">29-Lake/Webster Rd</option>
+                <option value="30">30-Estacada</option>
+                <option value="32">32-Oatfield</option>
+                <option value="33">33-McLoughlin/King Rd</option>
+                <option value="34">34-Linwood/River Rd</option>
+                <option value="35">35-Macadam/Greeley</option>
+                <option value="36">36-South Shore</option>
+                <option value="37">37-Lake Grove</option>
+                <option value="38">38-Boones Ferry Rd</option>
+                <option value="39">39-Lewis & Clark</option>
+                <option value="43">43-Taylors Ferry Rd</option>
+                <option value="44">44-Capitol Hwy/Mocks Crest</option>
+                <option value="45">45-Garden Home</option>
+                <option value="46">46-North Hillsboro</option>
+                <option value="47">47-Baseline/Evergreen</option>
+                <option value="48">48-Cornell</option>
+                <option value="50">50-Cedar Mill</option>
+                <option value="51">51-Vista</option>
+                <option value="52">52-Farmington/185th</option>
+                <option value="53">53-Arctic/Allen</option>
+                <option value="54">54-Beaverton</option>
+                <option value="55">55-Hamilton</option>
+                <option value="56">56-Scholls Ferry Rd</option>
+                <option value="57">57-TV Hwy/Forest Grove</option>
+                <option value="58">58-Canyon Rd</option>
+                <option value="59">59-Walker/Park Way</option>
+                <option value="61">61-Marquam Hill/Beaverton</option>
+                <option value="62">62-Murray Blvd</option>
+                <option value="63">63-Washington Park/Arlington Hts</option>
+                <option value="64">64-Marquam Hill/Tigard</option>
+                <option value="65">65-Marquam Hill/Barbur Blvd</option>
+                <option value="66">66-Marquam Hill/Hollywood</option>
+                <option value="67">67-Bethany/158th</option>
+                <option value="68">68-Marquam Hill/Collins Circle</option>
+                <option value="70">70-12th/NE 33rd Ave</option>
+                <option value="71">71-60th/122nd Ave</option>
+                <option value="72">72-Killingsworth/82nd</option>
+                <option value="75">75-Cesar Chavez/Lombard</option>
+                <option value="76">76-Beaverton/Tualatin</option>
+                <option value="77">77-Broadway/Halsey</option>
+                <option value="78">78-Beaverton/Lake Oswego</option>
+                <option value="79">79-Clackamas/Oregon City</option>
+                <option value="80">80-Kane/Troutdale Rd</option>
+                <option value="81">81-Kane/257th</option>
+                <option value="83">83-Washington Park Loop</option>
+                <option value="84">84-Powell Valley/Orient Dr</option>
+                <option value="85">85-Swan Island</option>
+                <option value="87">87-Airport Way/181st</option>
+                <option value="88">88-Hart/198th</option>
+                <option value="92">92-South Beaverton Express</option>
+                <option value="93">93-Tigard/Sherwood</option>
+                <option value="94">94-Pacific Hwy/Sherwood</option>
+                <option value="96">96-Tualatin/I</option>
+                <option value="99">99-Macadam/McLoughlin</option>
+                <option value="152">152-Milwaukie</option>
+                <option value="154">154-Willamette/Clackamas Heights</option>
+                <option value="155">155-Sunnyside</option>
+                <option value="156">156-Mather Rd</option>              
+                <option value="179">179-Webster/Oatfield</option>
+                <option value="291">291-Orange Night Bus</option>
+              </select>             
+            </div>
+        </div>
+            <!--<input class="form-control" placeholder="Enter a Bus Route to Map" type="text" name="routeInput">
+            <span class="input-group-addon">
+            <span><button type="submit" class="glyphicon glyphicon-search"></button>
+            </span>
+           </span>-->
+          </div>
+        </div>
+      </form>
+    </div>
+</div>
+
+<div id="map-canvas"></div>
+<div class="container-fluid" id="main">
+  <div class="row">
+    <div class="col-xs-12"><!--map-canvas will be postioned here--></div>    
+  </div>
+</div>
+<!-- end template -->
+
+
+<!--
+<label><input type="checkbox" id="traffic" onclick="check()" />Traffic | </label>
+<form id="mapInput">Enter Bus Route: <input type="text" name="routeInput">
+    <input type="submit" value="Map it!">
+<div id="googleMap" style="width:800px;height:800px;"></div>-->
+
+</body>
+</html>
