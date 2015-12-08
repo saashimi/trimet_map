@@ -20,7 +20,8 @@ from routeserver import views as routeserver_views
 #from routeserver.views import SpatialDataViewSet
 
 router = routers.DefaultRouter(trailing_slash=False)
-router.register(r'TMRoutes', routeserver_views.SpatialDataViewSet)
+router.register(r'TMRoutes', routeserver_views.TMRoutesDataViewSet)
+router.register(r'TMRouteStops', routeserver_views.TMRouteStopsDataViewSet)
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),

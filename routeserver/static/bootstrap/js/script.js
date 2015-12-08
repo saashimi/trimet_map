@@ -125,7 +125,7 @@ function displayGeojson(dataIn) {
 }//end displayGeojson
 
 function displayRouteStops(dataIn) {
-  var geojsonURL1 = 'http://localhost:8000/dbpopulate/';
+  var geojsonURL1 = 'http://localhost:9000/routeserver/';
   var geojsonURL2 = 'TMRouteStops?=format%3Djson&format=json&rte=';
   var geojsonStopURL = dataIn;
   var stopStyle = map.data.setStyle({
