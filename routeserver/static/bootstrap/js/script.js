@@ -3,8 +3,8 @@ var map = null;
 var trafficLayer=new google.maps.TrafficLayer();
 
 //----Other global vars-------------------------------------------------------//
-var markers = [];  
-
+var mapObjects = []; //Collect markers and layers in an array to facilitate their
+                     //display and removal.  
 //----Functions---------------------------------------------------------------//
 function trimet(passRouteInput) {
   //Accesses the TriMet API for live vehicle location info.
@@ -82,7 +82,7 @@ function displayMarkers(dataIn) {
       content: infoContent
     })
 
-    markers.push(marker);
+    mapObjects.push(marker);
     //Zooms in on marker upon click.
     google.maps.event.addListener(marker, 'click', function() {
       map.panTo(this.getPosition());
@@ -93,48 +93,65 @@ function displayMarkers(dataIn) {
 }
 
 //----Clear map marker functions---------------------------------------------//
-// Sets the map on all markers in the array.
+// Sets the map on all mapObjects in the array.
 function setMapOnAll(map) {
-  for (var i = 0; i < markers.length; i++) {
-    markers[i].setMap(map);
+  for (var i = 0; i < mapObjects.length; i++) {
+    mapObjects[i].setMap(map);
   }
 }
 
-// Removes the markers from the map, but keeps them in the array.
-function clearMarkers() {
+// Removes the mapObjects from the map, but keeps them in the array.
+function clearObjects() {
   setMapOnAll(null);
 }
 
-// Deletes all markers in the array by removing references to them.
-function deleteMarkers() {
-  clearMarkers();
-  markers = [];
+// Deletes all mapObjects in the array by removing references to them.
+function deleteObjects() {
+  clearObjects();
+  mapObjects = [];
 }
 //----End clear map marker functions------------------------------------------//
 
 function displayGeojson(dataIn) {
+  var routeLayer = new google.maps.Data();
+  routeLayer.setMap(null);
   var geojsonURL1 = 'http://localhost:9000/routeserver/';
   var geojsonURL2 = 'TMRoutes?=format%3Djson&format=json&rte=';
   var geojsonRteURL = dataIn;
-  var routeStyle = map.data.setStyle({
+  routeLayer.loadGeoJson(geojsonURL1 + geojsonURL2 + geojsonRteURL);
+  routeLayer.setStyle({
     strokeColor: 'blue',
     strokeOpacity: 0.5,
   })
+  routeLayer.setMap(map);
+  mapObjects.push(routeLayer);
 
-  map.data.loadGeoJson(geojsonURL1 + geojsonURL2 + geojsonRteURL);
 }//end displayGeojson
 
 function displayRouteStops(dataIn) {
+  var stopLayer = new google.maps.Data();
+  stopLayer.setMap(null);
   var geojsonURL1 = 'http://localhost:9000/routeserver/';
   var geojsonURL2 = 'TMRouteStops?=format%3Djson&format=json&rte=';
   var geojsonStopURL = dataIn;
-  var stopStyle = map.data.setStyle({
+  stopLayer.loadGeoJson(geojsonURL1 + geojsonURL2 + geojsonStopURL);
+  stopLayer.setStyle(function(feature) {
+    return({
     icon: 'http://maps.google.com/mapfiles/kml/paddle/blu-blank-lv.png',
-    strokeColor: 'blue',
-    strokeOpacity: 0.5,
+    visible: false,
+    })
   })
+  stopLayer.setMap(map);
+  mapObjects.push(stopLayer);
 
-  map.data.loadGeoJson(geojsonURL1 + geojsonURL2 + geojsonStopURL);
+  map.addListener('zoom_changed', function(event) {
+    zoomLevel = map.getZoom();
+    if (zoomLevel <= 10) {
+      stopLayer.overrideStyle(event.feature, {visible: true});
+    } else {
+      stopLayer.revertStyle();
+    }
+  })
 }//end displayGeojson 
 
 //----The main google maps initialization function----------------------------//
@@ -177,6 +194,8 @@ function initialize(dataIn) {
   map.mapTypes.set('desaturated', mapType);
   map.setMapTypeId('desaturated');
 
+
+
   //----Zooms to route extents------------------------------------------------//
   var bounds = new google.maps.LatLngBounds();
     map.data.addListener('addfeature', function (e) {
@@ -202,11 +221,11 @@ function initialize(dataIn) {
   
   //----Event Listener--------------------------------------------------------//  
   $("#routes").change(function(feature) {
-    deleteMarkers();
+    deleteObjects();
     //investigate this: uses callback functions
-    map.data.forEach(function(feature) {
+    /*map.data.forEach(function(feature) {
         map.data.remove(feature);
-    });
+    });*/
 
     var passRouteInput = $(this).val();
     console.log(passRouteInput);
@@ -215,13 +234,14 @@ function initialize(dataIn) {
     displayRouteStops(passRouteInput);
   })
 
-  /*google.maps.event.addListener(map, 'zoom_changed', function() {
+  /*
+  google.maps.event.addListener(map, 'zoom_changed', function() {
     zoomLevel = map.getZoom();
     if (zoomLevel <= 12) {
-      map.data.setStyle({visible: true});
+      map.data.overrideStyle({visible: true});
       //(dataIn);
     }
-  })   */
+  }) */   
 
 /*  $("#mapInput").submit(function(e) {
     var passRouteInput = $("input[name=routeInput]").val();
