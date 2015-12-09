@@ -50,17 +50,20 @@ function trimetStop(passStopInput) {
       innerStopData = data[index]
       $.each(innerStopData, function(index1, value1) {
         if (index1 === "route") { 
-        //console.log(index1, value1);
           var stopDataPacket = [
             innerStopData.vehicleID,   //index = 0
-            innerStopData.estimated   //index = 1
+            innerStopData.estimated    //index = 1
           ];
         stopDataOut.push(stopDataPacket);
         console.log("stopDataOut is: " + stopDataOut);
+        infowindow.setContent("This is stop: " + stopID + " | trimet data response is: " + stopDataOut);
         }
       })
     })
   })
+      infowindow.setOptions({pixelOffset: new google.maps.Size(0,-10)});
+      infowindow.open(map);
+      console.log("The callback function fired.")
 };
 
 function check() {
@@ -72,8 +75,6 @@ function check() {
     trafficLayer.setMap(null);
   }
 }
-
-
 
 function displayMarkers(dataIn) {
   //Displays marker data from TriMet API data coordinates.
@@ -209,7 +210,6 @@ function initialize(dataIn) {
   map.setMapTypeId('desaturated');
 
 
-
   //----Zooms to route extents------------------------------------------------//
   var bounds = new google.maps.LatLngBounds();
     map.data.addListener('addfeature', function (e) {
@@ -252,36 +252,15 @@ function initialize(dataIn) {
 //This allows us to click on stops. 
  map.data.addListener('click', function(event) {
     stopID = event.feature.getProperty("stop_id");  
-    test = trimetStop(stopID);
-    
-    function trimetCallback(inputID, responseData, callback) { //test is the callback.
-      infowindow.setContent("This is stop: " + stopID + "| trimet data response is: " + responseData);
-      console.log("Step 2. We're in the first level of callback!")
-      infowindow.setPosition(event.latLng);
-      infowindow.setOptions({pixelOffset: new google.maps.Size(0,-10)});
-      infowindow.open(map);
-      callback();
-    }
-
-    trimetCallback(stopID, test, function() {
-      console.log("Step 1. Well I guess it fired.")
-    });
-    //response(function() {
+    infowindow.setPosition(event.latLng);
+    response = trimetStop(stopID);   
 });
- 
 
-/*  $("#mapInput").submit(function(e) {
-    var passRouteInput = $("input[name=routeInput]").val();
-    console.log(passRouteInput);
-    e.preventDefault();
-    trimet(passRouteInput);
-  })*/
 }; 
 //----End initialize()--------------------------------------------------------//
 
 google.maps.event.addDomListener(window, 'load', initialize);   
 
-//trimetStop(3611)
 
 
 
