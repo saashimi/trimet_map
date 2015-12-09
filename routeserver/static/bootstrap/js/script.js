@@ -251,16 +251,24 @@ function initialize(dataIn) {
 
 //This allows us to click on stops. 
  map.data.addListener('click', function(event) {
-    stopID = event.feature.getProperty("stop_id");
+    stopID = event.feature.getProperty("stop_id");  
+    test = trimetStop(stopID);
     
-    response = trimetStop(stopID) 
-    console.log("event click response is: " + response); 
-    infowindow.setContent("This is stop:" + stopID + response);
-    infowindow.setPosition(event.latLng);
-    infowindow.setOptions({pixelOffset: new google.maps.Size(0,-10)});
-    infowindow.open(map);
-    
- });   
+    function trimetCallback(inputID, responseData, callback) { //test is the callback.
+      infowindow.setContent("This is stop: " + stopID + "| trimet data response is: " + responseData);
+      console.log("Step 2. We're in the first level of callback!")
+      infowindow.setPosition(event.latLng);
+      infowindow.setOptions({pixelOffset: new google.maps.Size(0,-10)});
+      infowindow.open(map);
+      callback();
+    }
+
+    trimetCallback(stopID, test, function() {
+      console.log("Step 1. Well I guess it fired.")
+    });
+    //response(function() {
+});
+ 
 
 /*  $("#mapInput").submit(function(e) {
     var passRouteInput = $("input[name=routeInput]").val();
