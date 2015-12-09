@@ -5,6 +5,8 @@ var trafficLayer=new google.maps.TrafficLayer();
 //----Other global vars-------------------------------------------------------//
 var mapObjects = []; //Collect markers and layers in an array to facilitate their
                      //display and removal.  
+var infowindow = new google.maps.InfoWindow();
+
 //----Functions---------------------------------------------------------------//
 function trimet(passRouteInput) {
   //Accesses the TriMet API for live vehicle location info.
@@ -36,6 +38,31 @@ function trimet(passRouteInput) {
   });
 };
 
+function trimetStop(passStopInput) {
+  var url = "https://developer.trimet.org/ws/v2/arrivals?locIDs=";
+  var locID = passStopInput;
+  var urlTrailing =  "&minutes&appID=";
+  var innerStopData;
+  var stopDataOut = [];
+  $.post(url + locID + urlTrailing + APPID, function(data) {
+  data = data.resultSet.arrival;
+    $.each(data, function(index, value) {
+      innerStopData = data[index]
+      $.each(innerStopData, function(index1, value1) {
+        if (index1 === "route") { 
+        //console.log(index1, value1);
+          var stopDataPacket = [
+            innerStopData.vehicleID,   //index = 0
+            innerStopData.estimated   //index = 1
+          ];
+        stopDataOut.push(stopDataPacket);
+        console.log("stopDataOut is: " + stopDataOut);
+        }
+      })
+    })
+  })
+};
+
 function check() {
   // Adds checkbox for live google traffic info.
   
@@ -45,6 +72,8 @@ function check() {
     trafficLayer.setMap(null);
   }
 }
+
+
 
 function displayMarkers(dataIn) {
   //Displays marker data from TriMet API data coordinates.
@@ -125,33 +154,18 @@ function displayGeojson(dataIn) {
   })
   routeLayer.setMap(map);
   mapObjects.push(routeLayer);
-
 }//end displayGeojson
 
 function displayRouteStops(dataIn) {
-  var stopLayer = new google.maps.Data();
-  stopLayer.setMap(null);
   var geojsonURL1 = 'http://localhost:9000/routeserver/';
   var geojsonURL2 = 'TMRouteStops?=format%3Djson&format=json&rte=';
   var geojsonStopURL = dataIn;
-  stopLayer.loadGeoJson(geojsonURL1 + geojsonURL2 + geojsonStopURL);
-  stopLayer.setStyle(function(feature) {
+  map.data.setStyle(function(feature) {
     return({
     icon: 'http://maps.google.com/mapfiles/kml/paddle/blu-blank-lv.png',
-    visible: false,
     })
   })
-  stopLayer.setMap(map);
-  mapObjects.push(stopLayer);
-
-  map.addListener('zoom_changed', function(event) {
-    zoomLevel = map.getZoom();
-    if (zoomLevel <= 10) {
-      stopLayer.overrideStyle(event.feature, {visible: true});
-    } else {
-      stopLayer.revertStyle();
-    }
-  })
+  map.data.loadGeoJson(geojsonURL1 + geojsonURL2 + geojsonStopURL);;
 }//end displayGeojson 
 
 //----The main google maps initialization function----------------------------//
@@ -223,9 +237,10 @@ function initialize(dataIn) {
   $("#routes").change(function(feature) {
     deleteObjects();
     //investigate this: uses callback functions
-    /*map.data.forEach(function(feature) {
+    //clear out the data layer.
+    map.data.forEach(function(feature) {
         map.data.remove(feature);
-    });*/
+    });
 
     var passRouteInput = $(this).val();
     console.log(passRouteInput);
@@ -234,14 +249,18 @@ function initialize(dataIn) {
     displayRouteStops(passRouteInput);
   })
 
-  /*
-  google.maps.event.addListener(map, 'zoom_changed', function() {
-    zoomLevel = map.getZoom();
-    if (zoomLevel <= 12) {
-      map.data.overrideStyle({visible: true});
-      //(dataIn);
-    }
-  }) */   
+//This allows us to click on stops. 
+ map.data.addListener('click', function(event) {
+    stopID = event.feature.getProperty("stop_id");
+    
+    response = trimetStop(stopID) 
+    console.log("event click response is: " + response); 
+    infowindow.setContent("This is stop:" + stopID + response);
+    infowindow.setPosition(event.latLng);
+    infowindow.setOptions({pixelOffset: new google.maps.Size(0,-10)});
+    infowindow.open(map);
+    
+ });   
 
 /*  $("#mapInput").submit(function(e) {
     var passRouteInput = $("input[name=routeInput]").val();
@@ -253,6 +272,8 @@ function initialize(dataIn) {
 //----End initialize()--------------------------------------------------------//
 
 google.maps.event.addDomListener(window, 'load', initialize);   
+
+//trimetStop(3611)
 
 
 
