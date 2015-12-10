@@ -5,10 +5,10 @@ class TMRoutesDataSerializer(GeoFeatureModelSerializer):
     class Meta:
         model = TMRoutes
         geo_field = 'geom'
-        fields = ('rte', 'rte_desc', )
+        fields = ('rte', 'rte_desc', 'dir')
 
 class TMRouteStopsDataSerializer(GeoFeatureModelSerializer):
     class Meta:
         model = TMRouteStops
         geo_field = 'geom'
-        fields = ('rte', 'stop_id' )
+        fields = ('rte', 'stop_id', 'dir', 'stop_name', )

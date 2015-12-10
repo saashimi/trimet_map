@@ -35,4 +35,4 @@ class TMRouteStops(models.Model):
     objects = models.GeoManager()
 
     def __str__(self):
-        return 'Route Number: %s' % str(self.rte) + " Stop ID: " + str(self.stop_id) + " Sequence: " + str(self.stop_seq)
+        return 'Route Number: %s' % str(self.rte) + "Stop Name: " + self.stop_name +  "Stop ID: " + str(self.stop_id) + " Dir: " + str(self.stop_id)
