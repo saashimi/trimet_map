@@ -16,12 +16,14 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib.gis import admin
 from rest_framework import routers
-from routeserver.views import SpatialDataViewSet
+from routeserver import views as routeserver_views
 
 router = routers.DefaultRouter(trailing_slash=False)
-router.register(r'TMRoutes', SpatialDataViewSet)
+router.register(r'TMRoutes', routeserver_views.TMRoutesDataViewSet)
+router.register(r'TMRouteStops', routeserver_views.TMRouteStopsDataViewSet)
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^$', routeserver_views.home_page),
     url(r'^routeserver/', include(router.urls)),
 ]
