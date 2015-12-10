@@ -14,7 +14,7 @@ class TMRouteStopsDataViewSet(viewsets.ModelViewSet):
     queryset = TMRouteStops.objects.all()
     serializer_class = TMRouteStopsDataSerializer
     filter_backends = (filters.DjangoFilterBackend,) 
-    filter_fields = ('rte', 'dir', 'stop_id', 'stop_name') 
+    filter_fields = ('rte', 'stop_id',) 
 
 def home_page(request):
     return render(request, 'home.html')
