@@ -24,7 +24,8 @@ body{
 }
 
 .navbar .checkbox{ 
-    padding-top: .3em;
+    padding-top: .35em;
+    padding-right: .5em;
 }
 
 .navbar-custom .form-control:focus {
