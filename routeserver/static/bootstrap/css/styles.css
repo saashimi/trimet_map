@@ -23,6 +23,11 @@ body{
     color:#fefefe;
 }
 
+.navbar .checkbox{ 
+    padding-top: .35em;
+    padding-right: .5em;
+}
+
 .navbar-custom .form-control:focus {
     border-color: #49bfff;
     outline: 0;
@@ -51,3 +56,4 @@ body{
     bottom:0;
     overflow:hidden;
 }
+

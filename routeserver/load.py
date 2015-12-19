@@ -13,7 +13,7 @@ tm_routes_mapping = {
     'type' : 'type',
     'geom' : 'MULTILINESTRING',
 }
-
+ 
 tmroutes_shp = os.path.abspath(os.path.join(os.path.dirname(__file__), 'data', 'tm_routes.shp'))
 
 def run(verbose=True):

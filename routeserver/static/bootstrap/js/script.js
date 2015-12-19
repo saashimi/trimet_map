@@ -27,7 +27,7 @@ function trimet(passRouteInput) {
             innerData.latitude,       //index = 0
             innerData.longitude,      //index = 1
             innerData.vehicleID,      //index = 2
-            innerData.time,          //index = 3
+            innerData.time,           //index = 3
             innerData.direction,      //index = 4
             innerData.signMessageLong //index = 5
           ];

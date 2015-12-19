@@ -27,7 +27,9 @@ SECRET_KEY = SUPERSECRETKEY
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    #https://pdx-transit-tracker.herokuapp.com/
+]
 
 
 # Application definition
@@ -82,6 +84,8 @@ WSGI_APPLICATION = 'trimet_map.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
+
+#DATABASE_URL: "postgres://fvtjxjcmocrxjg:FtVSddEDD9fYKncj-yz0PTp1vi@ec2-54-83-59-203.compute-1.amazonaws.com:5432/d37iqqitk5nvn1"
 
 DATABASES = {
     'default': {
