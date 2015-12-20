@@ -310,7 +310,3 @@ function initialize(dataIn) {
 //----End initialize()--------------------------------------------------------//
 
 google.maps.event.addDomListener(window, 'load', initialize);   
-
-
-
-
