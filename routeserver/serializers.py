@@ -1,9 +1,9 @@
+from rest_framework_gis.serializers import GeoFeatureModelSerializer
+from .models import TMRoutes, TMRouteStops
+
 """
 Serializes geospatial fields from models into GeoJSON data.
 """
-
-from rest_framework_gis.serializers import GeoFeatureModelSerializer
-from .models import TMRoutes, TMRouteStops
 
 class TMDataSerializer(GeoFeatureModelSerializer):
     class Meta:
