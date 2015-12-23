@@ -1,18 +1,20 @@
 //----Functions---------------------------------------------------------------//
-function trimet(passRouteInput) {
+function trimetRouteAPI(passRouteInput) {
   //Accesses the TriMet API for live vehicle location info.
-  //Input: Route number from user selection box.
-  //Output: A data packet of relevant TriMet Vehicle info.
+  //Output: An array containing lat/long, vehicle ID, timestamp, direction, 
+  //and verbose route information.
+  //Input: Route number from user selection dropdown.
  
   var url = "https://developer.trimet.org/ws/v2/vehicles/appID=" 
   var dataOut = [];
   var innerData;
   $.post(url + APPID, function(data) {
   data = data.resultSet.vehicle;
-    $.each(data, function(index, value) { // Key into the inner JSON
-      innerData = data[index];
-      $.each(innerData, function(index1, value1) {
-        if (index1 === "routeNumber" && value1 === Number(passRouteInput)) { 
+    $.each(data, function(outerIndex, outerValue) { // Key into the inner JSON
+      innerData = data[outerIndex];
+      $.each(innerData, function(innerIndex, innerValue) {
+        if (innerIndex === "routeNumber" && 
+            innerValue === Number(passRouteInput)) { 
           var dataPacket = [
             innerData.latitude,       //index = 0
             innerData.longitude,      //index = 1
@@ -29,7 +31,14 @@ function trimet(passRouteInput) {
   });
 };
 
-function trimetStop(passStopRouteServed, passStopInput, passStopName) {
+function trimetStopAPI(passStopRouteServed, passStopInput, passStopName) {
+  //Accesses TriMet arrivals API for realtime vehicle ETAs for that particular
+  //route and stop. 
+  //Input data: Route number, Stop ID, descriptive stop name.
+  //Output data: Array of incoming vehicle IDs,
+  //             Array of incoming vehicle ETAs in unix time format,
+  //             Verbose stop name.
+
   var url = "https://developer.trimet.org/ws/v2/arrivals?locIDs=";
   var locID = passStopInput;
   var urlTrailing =  "&minutes&appID=";
@@ -43,28 +52,45 @@ function trimetStop(passStopRouteServed, passStopInput, passStopName) {
       $.each(innerStopData, function(index1, value1) {
         if (index1 === "route" && value1 === passStopRouteServed) { 
           var vehicleID = innerStopData.vehicleID;
-          vehicleList.push(vehicleID);
-
-            var date = new Date(innerStopData.estimated);
-            if (date.getHours() > 12) { 
-              var hours = date.getHours() - 12;
-            } else { 
-              var hours = date.getHours();
-            };
-            var minutes = "0" + date.getMinutes();
-            var ETA = hours + ":" + minutes.substr(-2);
-          
-          arrivalTime.push(ETA);         
-        var infoContent = ("<h5><p> This is stop: " + stopID + "</br>"
-          + "<h4><p>" + passStopName + "</br></h4>"
-          + "<h6><p>Upcoming Vehicles (ID#): " + vehicleList + "</br></h6>"
-          + "<h6><p>Estimated arrival times: " + arrivalTime + "</br></h6>"
-          )
-        infowindow.setContent(infoContent);
+          vehicleList.push(vehicleID);        
+          arrivalTime.push(innerStopData.estimated);         
         }
-      })
-    })
-  })
-      infowindow.setOptions({pixelOffset: new google.maps.Size(0,-10)});
-      infowindow.open(map);
+      });
+    });
+  infoWindowSetup(vehicleList, arrivalTime, passStopName);
+  });
+};
+
+function infoWindowSetup(passVehicles, passArrivals, passStopName) {
+    //Sets up the info windows for selected route stops. 
+    //Inputs: array of incoming vehicles,
+    //        array of incoming arrival times,
+    //        verbose stop name
+    //Output: infowindow content passed to gmapScript.js
+
+    var formattedETA = [];
+    //Converts unix time format to HH:MM format.
+    
+    $.each(passArrivals, function(index, value) {
+      var date = new Date(value);
+      if (date.getHours() > 12) { 
+        var hours = date.getHours() - 12;
+      } else { 
+        var hours = date.getHours();
+      }
+      var minutes = "0" + date.getMinutes();
+      var ETA = hours + ":" + minutes.substr(-2);
+      formattedETA.push(ETA);
+    });
+    
+    // Formats and populates the info window. 
+    var infoContent = (
+      "<h5><p> This is stop: " + stopID + "</br>"
+      + "<h4><p>" + passStopName + "</br></h4>"
+      + "<h6><p>Upcoming Vehicles (ID#): " + passVehicles + "</br></h6>"
+      + "<h6><p>Estimated arrival times: " + formattedETA + "</br></h6>"
+    )
+    infowindow.setContent(infoContent);
+    infowindow.setOptions({pixelOffset: new google.maps.Size(0,-10)});
+    infowindow.open(map);
 };

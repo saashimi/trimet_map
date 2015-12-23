@@ -10,7 +10,7 @@ var infowindow = new google.maps.InfoWindow(); //for trimet stops onclick events
 
 //----Functions---------------------------------------------------------------//
 function check() {
-  // Adds checkbox for live google traffic info.
+  // Adds checkbox to display live google traffic info.
   
   if (document.getElementById('traffic').checked) {
     trafficLayer.setMap(map);
@@ -127,8 +127,7 @@ function displayRouteStops(dataIn) {
     })
   })
   map.data.loadGeoJson(geojsonURL1 + geojsonURL2 + geojsonStopURL);
-}
-//----End load geoJSON functions----------------------------------------------//
+}//----End load geoJSON functions----------------------------------------------//
 
 //----The main google maps initialization function----------------------------//
 function initialize(dataIn) {
@@ -205,8 +204,7 @@ function initialize(dataIn) {
     });
     //loads new data per new route selection.
     var passRouteInput = $(this).val();
-    console.log(passRouteInput);
-    trimet(passRouteInput);
+    trimetRouteAPI(passRouteInput);
     displayGeojson(passRouteInput);
     displayRouteStops(passRouteInput);
   })
@@ -218,13 +216,12 @@ function initialize(dataIn) {
     stopName = event.feature.getProperty("stop_name");
     stopRouteServed = event.feature.getProperty("rte");  
     infowindow.setPosition(event.latLng);
-    response = trimetStop(stopRouteServed, stopID, stopName);   
+    response = trimetStopAPI(stopRouteServed, stopID, stopName);   
   })
 
   map.addListener('zoom_changed', function() {
     //Prevents visual clutter by hiding bus stops until a close-in zoom level.
     zoomLevel = map.getZoom();
-    console.log(zoomLevel);
     if (zoomLevel < 15) {
       map.data.setMap(null);
     } else {
