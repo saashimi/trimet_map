@@ -19,15 +19,15 @@
 // Hides internal methods and objects from external namespace
 var gmapScript = (function() {
 
-  //----Other global vars-----------------------------------------------------//
+  //----gmapScript Variables--------------------------------------------------//
   var mapObjects = []; // Collect markers and layers in an array to facilitate 
                        // their display and removal. 
   var infowindow = new google.maps.InfoWindow(); // For trimet stops onclick 
                                                  // events.
-
   //----Functions-------------------------------------------------------------//
   
   //----Clear map marker functions--------------------------------------------//
+  
   // Sets the map on all mapObjects in the array.
   function setMapOnAll(map) {
     for (var i = 0; i < mapObjects.length; i++) {
@@ -45,15 +45,17 @@ var gmapScript = (function() {
     clearObjects();
     mapObjects = [];
   }
-  //----End clear map marker functions------------------------------------------//
+  //----End clear map marker functions----------------------------------------//
 
-  //----Load geoJSON objects from database functions----------------------------//
+  //----Load geoJSON objects from database functions--------------------------//
+  var baseURL = 'http://localhost:9000/routeserver/';
+  var trailingURL = '?=format%3Djson&format=json&rte=';
+
   function displayGeojson(dataIn) {
     var routeLayer = new google.maps.Data();
-    var geojsonURL1 = 'http://localhost:9000/routeserver/';
-    var geojsonURL2 = 'TMRoutes?=format%3Djson&format=json&rte=';
+    var dbToUse = 'TMRoutes';
     var geojsonRteURL = dataIn;
-    routeLayer.loadGeoJson(geojsonURL1 + geojsonURL2 + geojsonRteURL);
+    routeLayer.loadGeoJson(baseURL + dbToUse + trailingURL + geojsonRteURL);
     routeLayer.setStyle(function(feature){
       return{
       strokeColor: 'blue',
@@ -65,8 +67,7 @@ var gmapScript = (function() {
   }
 
   function displayRouteStops(dataIn) {
-    var geojsonURL1 = 'http://localhost:9000/routeserver/';
-    var geojsonURL2 = 'TMRouteStops?=format%3Djson&format=json&rte=';
+    var dbToUse = 'TMRouteStops';
     var geojsonStopURL = dataIn;
     map.data.setStyle(function(feature) {
       var dir = feature.getProperty('dir');
@@ -77,7 +78,7 @@ var gmapScript = (function() {
       icon: iconColor  
       })
     })
-    map.data.loadGeoJson(geojsonURL1 + geojsonURL2 + geojsonStopURL);
+    map.data.loadGeoJson(baseURL + dbToUse + trailingURL + geojsonStopURL);
   }//----End load geoJSON functions----------------------------------------------//
 
   //----The main google maps initialization function----------------------------//
