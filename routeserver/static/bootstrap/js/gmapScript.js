@@ -1,3 +1,9 @@
+; //defensive semicolon
+
+//----Main wrapper function---------------------------------------------------//
+//Hides internal methods and objects from external namespace
+var mapScript = (function() {
+
 //----Global vars for google maps traffic layers------------------------------//
 // These must be placed outside of the google maps initialization function.
 var map = null;    
@@ -5,7 +11,7 @@ var trafficLayer=new google.maps.TrafficLayer();
 
 //----Other global vars-------------------------------------------------------//
 var mapObjects = []; //Collect markers and layers in an array to facilitate their
-                     //display and removal.  
+                     //display and removal. 
 var infowindow = new google.maps.InfoWindow(); //for trimet stops onclick events.
 
 //----Functions---------------------------------------------------------------//
@@ -16,63 +22,6 @@ function check() {
     trafficLayer.setMap(map);
   } else {
     trafficLayer.setMap(null);
-  }
-}
-
-function displayMarkers(dataIn) {
-  //Displays marker data from TriMet API data coordinates.
-  //Input: output from triMet() function; an array of lat/long coordinates.
-  //Output: A blue marker on the google map canvas if direction = 0; 
-  //        A green marker on the google map canvas if direction = 1. 
-  var markerData = dataIn;
-  for( i = 0; i < markerData.length; i++ ) {
-    var position = new google.maps.LatLng(markerData[i][0], markerData[i][1]);
-    if (markerData[i][4] === 0) { 
-      var marker = new google.maps.Marker({
-          icon: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
-          position: position,
-          map: map,
-          animation: google.maps.Animation.DROP,
-          clickable: true,
-          zIndex: 999
-      })
-    } else {
-      var marker = new google.maps.Marker({
-          icon: "http://maps.google.com/mapfiles/ms/icons/green-dot.png",
-          position: position,
-          map: map,
-          animation: google.maps.Animation.DROP,
-          clickable: true,
-          zindex: 999
-      });
-      }
-
-      var date = new Date(markerData[i][3]);
-      if (date.getHours() > 12) { 
-        var hours = date.getHours() - 12;
-      } else { 
-        var hours = date.getHours();
-      };
-      var minutes = "0" + date.getMinutes();
-      var logTime = hours + ":" + minutes.substr(-2);
-    
-
-    var infoContent = ("<h5><p> Vehicle Number: " + String(markerData[i][2]) + '</br>'
-        +"<p>" + String(markerData[i][5]) + '</br>'
-        +"<h6><p> This position was logged at: " + logTime + '</br></h6>' 
-        
-        );
-    marker.info = new google.maps.InfoWindow({
-      content: infoContent
-    })
-
-    mapObjects.push(marker);
-    //Zooms in on marker upon click.
-    google.maps.event.addListener(marker, 'click', function() {
-      map.panTo(this.getPosition());
-      map.setZoom(15);
-      this.info.open(map, this);
-    });  
   }
 }
 
@@ -154,7 +103,7 @@ function initialize(dataIn) {
         ]
     }
   ];
-  // Sets the desaturated style (defined above) to desaturated.
+  // Sets the style (defined above) to desaturated.
   var mapProp = {
     center:new google.maps.LatLng(45.5200,-122.6819),
     zoom:12,
@@ -204,7 +153,7 @@ function initialize(dataIn) {
     });
     //loads new data per new route selection.
     var passRouteInput = $(this).val();
-    trimetRouteAPI(passRouteInput);
+    trimetFuncs.trimetRouteAPI(passRouteInput);
     displayGeojson(passRouteInput);
     displayRouteStops(passRouteInput);
   })
@@ -216,7 +165,7 @@ function initialize(dataIn) {
     stopName = event.feature.getProperty("stop_name");
     stopRouteServed = event.feature.getProperty("rte");  
     infowindow.setPosition(event.latLng);
-    response = trimetStopAPI(stopRouteServed, stopID, stopName);   
+    response = trimetFuncs.trimetStopAPI(stopRouteServed, stopID, stopName);   
   })
 
   map.addListener('zoom_changed', function() {
@@ -230,6 +179,112 @@ function initialize(dataIn) {
   });
 
 }; 
+
+
 //----End initialize()--------------------------------------------------------//
 
 google.maps.event.addDomListener(window, 'load', initialize);   
+
+
+//----Publicly-available functions--------------------------------------------//
+
+return {
+  
+  displayMarkers: function(dataIn) {
+  //Displays marker data from TriMet API data coordinates.
+  //Input: output from triMet() function; an array of lat/long coordinates.
+  //Output: A blue marker on the google map canvas if direction = 0; 
+  //        A green marker on the google map canvas if direction = 1. 
+    var markerData = dataIn;
+    for( i = 0; i < markerData.length; i++ ) {
+      var position = new google.maps.LatLng(markerData[i][0], markerData[i][1]);
+      if (markerData[i][4] === 0) { 
+        var marker = new google.maps.Marker({
+            icon: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
+            position: position,
+            map: map,
+            animation: google.maps.Animation.DROP,
+            clickable: true,
+            zIndex: 999
+        })
+      } else {
+        var marker = new google.maps.Marker({
+            icon: "http://maps.google.com/mapfiles/ms/icons/green-dot.png",
+            position: position,
+            map: map,
+            animation: google.maps.Animation.DROP,
+            clickable: true,
+            zindex: 999
+        });
+        }
+
+        var date = new Date(markerData[i][3]);
+        if (date.getHours() > 12) { 
+          var hours = date.getHours() - 12;
+        } else { 
+          var hours = date.getHours();
+        };
+        var minutes = "0" + date.getMinutes();
+        var logTime = hours + ":" + minutes.substr(-2);
+      
+
+      var infoContent = ('<h5><p> Vehicle Number: ' + String(markerData[i][2]) + 
+          '</br>' + '<p>' + String(markerData[i][5]) + '</br>'
+          +'<h6><p> This position was logged at: ' + logTime + '</br></h6>' 
+          
+          );
+      marker.info = new google.maps.InfoWindow({
+        content: infoContent
+      })
+
+      mapObjects.push(marker);
+      //Zooms in on marker upon click.
+      google.maps.event.addListener(marker, 'click', function() {
+        map.panTo(this.getPosition());
+        map.setZoom(15);
+        this.info.open(map, this);
+      });  
+    }
+  },
+  
+    infoWindowSetup : function(passVehicles, passArrivals, passStopName) {
+      /* Sets up the info windows for selected route stops. 
+      Inputs: array of incoming vehicles,
+              array of incoming arrival times,
+              verbose stop name
+      Output: infowindow content passed to gmapScript.js */
+
+      console.log('we\'re in here now!')
+      var formattedETA = [];
+      //Converts unix time format to HH:MM format.
+      
+      $.each(passArrivals, function(index, value) {
+        var date = new Date(value);
+        if (date.getHours() > 12) { 
+          var hours = date.getHours() - 12;
+        } else { 
+          var hours = date.getHours();
+        }
+        var minutes = "0" + date.getMinutes();
+        var ETA = hours + ":" + minutes.substr(-2);
+        formattedETA.push(ETA);
+      });
+      console.log(formattedETA);
+
+      // Formats and populates the info window. 
+      var infoContent = (
+        "<h5><p> This is stop: " + stopID + "</br>"
+        + "<h4><p>" + passStopName + "</br></h4>"
+        + "<h6><p>Upcoming Vehicles (ID#): " + passVehicles + "</br></h6>"
+        + "<h6><p>Estimated arrival times: " + formattedETA + "</br></h6>"
+      )
+      infowindow.setContent(infoContent);
+      infowindow.setOptions(
+        {pixelOffset: new google.maps.Size(0,-10)}
+        );
+      infowindow.open(map);
+    }
+
+};// End Return
+
+})();

@@ -10,7 +10,9 @@ REST GIS framework.
 
 class TMDataViewSet(viewsets.ModelViewSet):
     filter_backends = (filters.DjangoFilterBackend,) 
-
+    
+    class Meta:
+        abstract = True
 
 class TMRoutesDataViewSet(TMDataViewSet):
     queryset = TMRoutes.objects.all()
