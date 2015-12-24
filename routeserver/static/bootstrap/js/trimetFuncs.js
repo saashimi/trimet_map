@@ -1,9 +1,13 @@
-//Functions that access the TriMet Live Vehicle Positioning API and Realtime
-//Stop Arrival API.
+; // Defensive semicolon.
+
+/* These functions access the TriMet Live Vehicle Positioning API and Realtime
+Stop Arrival API.
 
 //----Main wrapper function---------------------------------------------------//
-/* Allows for behavior similar to a plugin library. 
-E.g. fuctions are callable in this manner: trimetFuncs.trimetRouteAPI(), etc. */ 
+Hides internal methods and objects from external namespace and allows for 
+behavior similar to a plugin library. 
+----
+E.g. functions are callable in this manner: trimetFuncs.trimetRouteAPI() */ 
 
 var trimetFuncs = (function() {
 
@@ -35,7 +39,7 @@ var trimetFuncs = (function() {
                 innerData.signMessageLong //index = 5
               ];
               dataOut.push(dataPacket);
-              mapScript.displayMarkers(dataOut);
+              gmapScript.displayMarkers(dataOut);
             } 
           });
         });
@@ -68,7 +72,7 @@ var trimetFuncs = (function() {
           }
         });
       });
-      mapScript.infoWindowSetup(vehicleList, arrivalTime, passStopName);
+      gmapScript.infoWindowSetup(vehicleList, arrivalTime, passStopName);
     });
   },
 

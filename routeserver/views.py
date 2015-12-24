@@ -15,7 +15,7 @@ class TMDataViewSet(viewsets.ModelViewSet):
         abstract = True
 
 class TMRoutesDataViewSet(TMDataViewSet):
-    queryset = TMRoutes.objects.all()
+    queryset = TMRoutes.objects.all ()
     serializer_class = TMRoutesDataSerializer
     filter_fields = ('rte',)
 
