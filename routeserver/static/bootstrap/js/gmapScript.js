@@ -2,6 +2,7 @@
 
 //----Global vars for google maps traffic layers------------------------------//
 // These must be placed outside of the google maps initialization function.
+//TODO: For future refactoring, attempt to wrap this in gmapScript.
   var map = null;    
   var trafficLayer=new google.maps.TrafficLayer();
 
@@ -79,9 +80,9 @@ var gmapScript = (function() {
       })
     })
     map.data.loadGeoJson(baseURL + dbToUse + trailingURL + geojsonStopURL);
-  }//----End load geoJSON functions----------------------------------------------//
+  }//----End load geoJSON functions-------------------------------------------//
 
-  //----The main google maps initialization function----------------------------//
+  //----The main google maps initialization function--------------------------//
   function initialize(dataIn) {
     // First defines styles.
     var styles = [
@@ -123,7 +124,7 @@ var gmapScript = (function() {
     map.setMapTypeId('desaturated');
 
 
-    //----Zooms to stop extents------------------------------------------------//
+    //----Zooms to stop extents-----------------------------------------------//
     var bounds = new google.maps.LatLngBounds();
       map.data.addListener('addfeature', function (e) {
           processPoints(e.feature.getGeometry(), bounds.extend, bounds);
@@ -141,12 +142,12 @@ var gmapScript = (function() {
             });
         }
     }
-    //----End zoom to route extents---------------------------------------------//
+    //----End zoom to route extents-------------------------------------------//
 
-    //----Initialize traffic checkbox-------------------------------------------//
+    //----Initialize traffic checkbox-----------------------------------------//
     check();
     
-    //----Event Listeners-------------------------------------------------------//  
+    //----Event Listeners-----------------------------------------------------//  
     $("#routes").change(function(feature) {
       // If route selection is changed, clears out marker objects and data layers
       // and loads data for new selection.
@@ -204,7 +205,7 @@ var gmapScript = (function() {
               map: map,
               animation: google.maps.Animation.DROP,
               clickable: true,
-              zIndex: 999
+              zIndex: 999 // places markers above stop icons.
           })
         } else {
           var marker = new google.maps.Marker({
@@ -217,6 +218,7 @@ var gmapScript = (function() {
           });
           }
 
+          //TODO: Make Unix time conversion its own function
           var date = new Date(markerData[i][3]);
           if (date.getHours() > 12) { 
             var hours = date.getHours() - 12;
