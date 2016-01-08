@@ -30,6 +30,7 @@ var trimetFuncs = (function() {
           $.each(innerData, function(innerIndex, innerValue) {
             if (innerIndex === "routeNumber" && 
                 innerValue === Number(passRouteInput)) { 
+              // TODO: modify this data structure for more intuitive data "passing"
               var dataPacket = [
                 innerData.latitude,       //index = 0
                 innerData.longitude,      //index = 1

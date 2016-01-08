@@ -2,7 +2,7 @@
 
 //----Global vars for google maps traffic layers------------------------------//
 // These must be placed outside of the google maps initialization function.
-//TODO: For future refactoring, attempt to wrap this in gmapScript.
+//TODO: For future refactoring, attempt to wrap this in gmapScript. 
   var map = null;    
   var trafficLayer=new google.maps.TrafficLayer();
 
