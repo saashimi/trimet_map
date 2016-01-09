@@ -16,7 +16,7 @@ var trimetFuncs = (function() {
 
     trimetRouteAPI : function(passRouteInput) {
       /* Accesses the TriMet API for live vehicle location info.
-      Output: An array containing lat/long, vehicle ID, timestamp, direction, 
+      Output: An array containing objects: lat/long, vehicle ID, timestamp, direction, 
       and verbose route information.
       Input: Route number from user selection dropdown. */
      
@@ -30,15 +30,14 @@ var trimetFuncs = (function() {
           $.each(innerData, function(innerIndex, innerValue) {
             if (innerIndex === "routeNumber" && 
                 innerValue === Number(passRouteInput)) { 
-              // TODO: modify this data structure for more intuitive data "passing"
-              var dataPacket = [
-                innerData.latitude,       //index = 0
-                innerData.longitude,      //index = 1
-                innerData.vehicleID,      //index = 2
-                innerData.time,           //index = 3
-                innerData.direction,      //index = 4
-                innerData.signMessageLong //index = 5
-              ];
+              var dataPacket = {
+                latitude : innerData.latitude,       
+                longitude : innerData.longitude,     
+                vehicleID : innerData.vehicleID,     
+                time : innerData.time,          
+                direction : innerData.direction,      
+                signMessageLong : innerData.signMessageLong 
+              };
               dataOut.push(dataPacket);
               gmapScript.displayMarkers(dataOut);
             } 
@@ -65,8 +64,8 @@ var trimetFuncs = (function() {
     data = data.resultSet.arrival;
       $.each(data, function(index, value) {
         innerStopData = data[index]
-        $.each(innerStopData, function(index1, value1) {
-          if (index1 === "route" && value1 === passStopRouteServed) { 
+        $.each(innerStopData, function(innerIndex, innerValue) {
+          if (innerIndex === "route" && innerValue === passStopRouteServed) { 
             var vehicleID = innerStopData.vehicleID;
             vehicleList.push(vehicleID);        
             arrivalTime.push(innerStopData.estimated);         

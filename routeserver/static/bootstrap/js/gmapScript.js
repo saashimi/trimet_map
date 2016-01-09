@@ -197,8 +197,12 @@ var gmapScript = (function() {
             A green marker on the google map canvas if direction = 1. */
       var markerData = dataIn;
       for( i = 0; i < markerData.length; i++ ) {
-        var position = new google.maps.LatLng(markerData[i][0], markerData[i][1]);
-        if (markerData[i][4] === 0) { 
+        var position = new google.maps.LatLng(
+                                              markerData[i].latitude, 
+                                              markerData[i].longitude
+                                              );
+        //console.log(position);
+        if (markerData[i].direction === 0) { 
           var marker = new google.maps.Marker({
               icon: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
               position: position,
@@ -219,7 +223,7 @@ var gmapScript = (function() {
           }
 
           //TODO: Make Unix time conversion its own function
-          var date = new Date(markerData[i][3]);
+          var date = new Date(markerData[i].time);
           if (date.getHours() > 12) { 
             var hours = date.getHours() - 12;
           } else { 
@@ -229,8 +233,8 @@ var gmapScript = (function() {
           var logTime = hours + ":" + minutes.substr(-2);
         
 
-        var infoContent = ('<h5><p> Vehicle Number: ' + String(markerData[i][2]) + 
-            '</br>' + '<p>' + String(markerData[i][5]) + '</br>'
+        var infoContent = ('<h5><p> Vehicle Number: ' + String(markerData[i].vehicleID) + 
+            '</br>' + '<p>' + String(markerData[i].signMessageLong) + '</br>'
             +'<h6><p> This position was logged at: ' + logTime + '</br></h6>' 
             
             );
