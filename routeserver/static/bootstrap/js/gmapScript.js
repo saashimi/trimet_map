@@ -142,7 +142,7 @@ var gmapScript = (function() {
             });
         }
     }
-    //----End zoom to route extents-------------------------------------------//
+    //----End zoom to stop extents--------------------------------------------//
 
     //----Initialize traffic checkbox-----------------------------------------//
     check();
@@ -191,7 +191,7 @@ var gmapScript = (function() {
     
     displayMarkers: function(dataIn) {
     /* Displays marker data from TriMet API data coordinates.
-    Input: output from trimetFuncs.trimetStops(); an array of lat/long coords,
+    Input: output from trimetFuncs.trimetStops(); an object containing lat/long coords,
            vehicle ID, timestamp, direction, and verbose route information.
     Output: A blue marker on the google map canvas if direction = 0; 
             A green marker on the google map canvas if direction = 1. */
@@ -212,7 +212,7 @@ var gmapScript = (function() {
               zIndex: 999 // places markers above stop icons.
           })
         } else {
-          var marker = new google.maps.Marker({
+           var marker = new google.maps.Marker({
               icon: "http://maps.google.com/mapfiles/ms/icons/green-dot.png",
               position: position,
               map: map,
