@@ -1,9 +1,10 @@
 import os
 from django.contrib.gis.utils import LayerMapping
-from .models import TMRoutes
+from .models import CommonTMInfo, TMRoutes
 
 # Auto-generated `LayerMapping` dictionary for tm_routes model
 tm_routes_mapping = {
+
     'rte' : 'rte',
     'dir' : 'dir',
     'rte_desc' : 'rte_desc',

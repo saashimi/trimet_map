@@ -1,14 +1,23 @@
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 from .models import TMRoutes, TMRouteStops
 
-class TMRoutesDataSerializer(GeoFeatureModelSerializer):
+"""
+Serializes geospatial fields from models into GeoJSON data.
+"""
+
+class TMDataSerializer(GeoFeatureModelSerializer):
     class Meta:
-        model = TMRoutes
         geo_field = 'geom'
+        abstract = True
+
+
+class TMRoutesDataSerializer(TMDataSerializer):
+    class Meta(TMDataSerializer.Meta):
+        model = TMRoutes
         fields = ('rte', 'rte_desc', 'dir')
 
-class TMRouteStopsDataSerializer(GeoFeatureModelSerializer):
-    class Meta:
+
+class TMRouteStopsDataSerializer(TMDataSerializer):
+    class Meta(TMDataSerializer.Meta):
         model = TMRouteStops
-        geo_field = 'geom'
         fields = ('rte', 'stop_id', 'dir', 'stop_name', )

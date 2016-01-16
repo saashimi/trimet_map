@@ -28,7 +28,6 @@ SECRET_KEY = SUPERSECRETKEY
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    #https://pdx-transit-tracker.herokuapp.com/
 ]
 
 
@@ -90,7 +89,8 @@ WSGI_APPLICATION = 'trimet_map.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': 'tm_route_db',
+        #'NAME': 'tm_route_db',
+        'NAME': 'tm_data',
         'USER': 'postgres',
         'PASSWORD': PASSWORD,
         'HOST': 'localhost',
