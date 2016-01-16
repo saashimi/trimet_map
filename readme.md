@@ -4,7 +4,7 @@ This is the capstone project for the PDX Code Guild Sept 2015 - Jan 2016 Class. 
 
 The utilizes the TriMet vehicle positions API and Stop ETA API for vehicle postions/ETA to stops, and displays this information using the Google Maps API.
 
-!(/screenshot.png "Screenshot")
+![Screenshot](screenshot.png "Screenshot")
 
 ## Developer/App keys 
 
