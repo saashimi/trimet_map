@@ -21,6 +21,17 @@ Vehicles are color-coded to corresponding stops: Green with Green and Blue with 
 
 Zooming in beyond a certain threshold will enable stops to be displayed. Clicking on a desired stop will reveal the Vehicle IDs and Estimated Time to Arrivals (ETA) of these vehicles.  
 
+## Architecture
+The database is a PostGRES/PostGIS database containing TriMet routes and stops 
+shapefiles. They have not been modified other than a projection conversion from
+Oregon Stateplane to Google Web Mercator. 
+
+Routes/Stops are served as serialized GeoJSON thanks to the django REST GIS 
+framework. 
+
+Calls to the TriMet API, which are then rendered in the Google Maps JS API are
+handled on the client side.  
+
 ## Known Issues
 Not all TriMet vehicles broadcast their geolocations. Fortunately, this seems to 
 be limited to (and consistent for) Portland StreetCar, WES Commuter Rail, and 
@@ -35,8 +46,8 @@ spaces, with ETA times rendered as NaN:NaN.
 
 ### Notes for Thunder
 I attempted a refactoring push over the Christmas holiday, per your suggestions. 
-I am especially proud of /routeserver/models.py, which now makes use of 
-python/django inheritance principles.  Please also take an extended look at
+I am especially proud of /routeserver/models.py and serializers.py, which now makes
+use of python/django inheritance principles.  Please also take an extended look at
 /routeserver/static/bootstrap/js/gmapScript.js (the main google maps script) and
 /routeserver/static/bootstrap/js/trimetFuncs.js, which represent my main TriMet
 API calls.  I tried to make use of namespacing/hoisting principles. 
