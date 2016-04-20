@@ -44,7 +44,7 @@ INSTALLED_APPS = (
     'rest_framework',
     'rest_framework_gis',
     'routeserver',
-    'corsheaders',
+    #'corsheaders',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -56,8 +56,8 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
-    'corsheaders.middleware.CorsMiddleware', # new corsheaders
-    'django.middleware.common.CommonMiddleware',  #new corsheaders
+    #'corsheaders.middleware.CorsMiddleware', # new corsheaders
+    #'django.middleware.common.CommonMiddleware',  #new corsheaders
 )
 
 ROOT_URLCONF = 'trimet_map.urls'
@@ -123,6 +123,7 @@ STATIC_URL = '/static/'
     os.path.join(BASE_DIR, "static"),
 ]"""
 
+"""
 CORS_ORIGIN_ALLOW_ALL = True
 
 CORS_ALLOW_HEADERS = (
@@ -133,6 +134,7 @@ CORS_ALLOW_HEADERS = (
     'authorization',
     'x-csrftoken'
 )
+"""
 
 REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ('rest_framework.filters.DjangoFilterBackend',)

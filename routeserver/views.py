@@ -15,7 +15,7 @@ class TMDataViewSet(viewsets.ModelViewSet):
         abstract = True
 
 class TMRoutesDataViewSet(TMDataViewSet):
-    queryset = TMRoutes.objects.all ()
+    queryset = TMRoutes.objects.all()
     serializer_class = TMRoutesDataSerializer
     filter_fields = ('rte',)
 
@@ -28,3 +28,5 @@ class TMRouteStopsDataViewSet(TMDataViewSet):
 
 def home_page(request):
     return render(request, 'home.html')
+
+#def get_trimet_data(request):
